@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="submitForm" netlify>
+  <form @submit.prevent="submitForm" method="POST" netlify>
     <div>
       <label for="name">Name:</label>
       <input type="text" id="name" v-model="name" required>
