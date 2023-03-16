@@ -1,36 +1,49 @@
 <template>
-  <form class="contact-form" method="POST" data-netlify data-netlify-site="lambent-caramel-cd3d15">
-    <label for="name">Name</label>
-    <input type="text" name="name" id="name" v-model="formData.name" required />
-    <label for="email">Email</label>
-    <input
-      type="email"
-      name="email"
-      id="email"
-      v-model="formData.email"
-      required
-    />
-    <label for="message">Message</label>
-    <textarea
-      name="message"
-      id="message"
-      v-model="formData.message"
-      required
-    ></textarea>
+  <form @submit.prevent="submitForm" netlify>
+    <div>
+      <label for="name">Name:</label>
+      <input type="text" id="name" v-model="name" required>
+    </div>
+    <div>
+      <label for="email">Email:</label>
+      <input type="email" id="email" v-model="email" required>
+    </div>
+    <div>
+      <label for="message">Message:</label>
+      <textarea id="message" v-model="message" required></textarea>
+    </div>
     <button type="submit">Submit</button>
   </form>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
-      formData: {
-        name: "",
-        email: "",
-        message: "",
-      },
+      name: '',
+      email: '',
+      message: '',
     };
+  },
+  methods: {
+    async submitForm() {
+      try {
+        await axios.post('/.netlify/functions/contact', {
+          name: this.name,
+          email: this.email,
+          message: this.message,
+        });
+        this.name = '';
+        this.email = '';
+        this.message = '';
+        alert('Message sent successfully!');
+      } catch (error) {
+        console.error(error);
+        alert('An error occurred while sending your message.');
+      }
+    },
   },
 };
 </script>
