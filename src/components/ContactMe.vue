@@ -1,49 +1,55 @@
 <template>
-  <form @submit.prevent="submitForm" method="POST" netlify>
-    <div>
-      <label for="name">Name:</label>
+  <div class="contact-form">
+    <form @submit.prevent="submitForm">
+      <label for="name">Name</label>
       <input type="text" id="name" v-model="name" required>
-    </div>
-    <div>
-      <label for="email">Email:</label>
+
+      <label for="email">Email</label>
       <input type="email" id="email" v-model="email" required>
-    </div>
-    <div>
-      <label for="message">Message:</label>
+
+      <label for="message">Message</label>
       <textarea id="message" v-model="message" required></textarea>
-    </div>
-    <button type="submit">Submit</button>
-  </form>
+
+      <button type="submit">Send Message</button>
+    </form>
+  </div>
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   data() {
     return {
       name: '',
       email: '',
-      message: '',
-    };
+      message: ''
+    }
   },
   methods: {
-    async submitForm() {
-      try {
-        await axios.post('/.netlify/functions/contact', {
+    submitForm() {
+      fetch('/.netlify/functions/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           name: this.name,
           email: this.email,
-          message: this.message,
-        });
-        this.name = '';
-        this.email = '';
-        this.message = '';
-        alert('Message sent successfully!');
-      } catch (error) {
+          message: this.message
+        })
+      })
+      .then(response => {
+        if (response.ok) {
+          alert('Your message has been sent!');
+          this.name = '';
+          this.email = '';
+          this.message = '';
+        } else {
+          throw new Error('Something went wrong!');
+        }
+      })
+      .catch(error => {
         console.error(error);
-        alert('An error occurred while sending your message.');
-      }
-    },
-  },
-};
+        alert('There was an error sending your message. Please try again later.');
+      });
+    }
+  }
+}
 </script>
